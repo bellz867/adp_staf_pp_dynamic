@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+
+<launch>
+
+  <!-- Obstacle parameters  -->
+  <arg name="n_of_obstacles" default="3" />
+  <arg name="obstacleNames" default="[bebop0,bebop2,bebop3]" />
+
+  <!-- Node for low level velocity tracking controller  --> 
+  <node name="Synchronizer" pkg="adp_staf_pp_dynamic" type="synchronizer_node" output="screen" />
+    
+</launch>
+

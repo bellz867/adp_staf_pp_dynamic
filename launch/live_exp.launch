@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+
+<launch>
+
+  <!-- Obstacle parameters  -->
+  <arg name="n_of_obstacles" default="3" />
+  <arg name="obstacleNames" default="[bebop0,bebop2,bebop3]" />
+  <arg name="secs_per_rev" default="29" />
+  <arg name="ra" default="0.2" />
+  <arg name="rbar" default="0.4" />
+  <arg name="rd" default="0.7" />
+  <arg name="repsilon" default="0.10" />
+  <arg name="usat" default="0.5" />
+  <arg name="weightQx" default="[2.0, 1.0]" />
+  <arg name="weightQzSum" default="[2.0, 2.0]" />
+  
+  <!-- ADP controller parameters  --> 
+  <arg name="init_desPose" default="[-4.0, 1.5, 1.0]" />
+  
+  
+  <!-- Low level velocity tracker parameters  --> 
+  <arg name="linVelGains" default="[0.8, 0.1, 0.07]" /> <!-- P D I -->
+  <arg name="angVelGains" default="[0.1, 0.05, 0.05]" />
+  <arg name="errorDerivativeBufferSize" default="10" />
+  <arg name="errorIntegralBufferSize" default="15" />
+
+  <!-- Nodes for obstacles  --> 	
+  <node name="obstacle1" pkg="adp_staf_pp_dynamic" type="obstacle_node">
+    <param name="bebopName" value="bebop0" />
+    <param name="loopRate" value="300" />
+    <param name="primary_centerx" value="0" />
+    <param name="primary_centery" value="0" />
+    <param name="primary_radius1" value="1.5" />
+    <param name="primary_radius2" value="1.5" />
+    <param name="primary_height" value="1" />
+    <param name="secs_per_rev" value="$(arg secs_per_rev)" />
+    <param name="phase_shift" value="1.50" />
+  </node>
+  
+  <node name="obstacle2" pkg="adp_staf_pp_dynamic" type="obstacle_node">
+    <param name="bebopName" value="bebop2" />
+    <param name="loopRate" value="300" />
+    <param name="primary_centerx" value="0.5" />
+    <param name="primary_centery" value="0" />
+    <param name="primary_radius1" value="1" />
+    <param name="primary_radius2" value="0.5" />
+    <param name="primary_height" value="1" />
+    <param name="secs_per_rev" value="$(arg secs_per_rev)" />
+    <param name="phase_shift" value="3.14" />
+    <param name="reverse" value="true" />
+  </node>
+
+  <!-- Node for controller  --> 
+  <node name="agent_controller" pkg="adp_staf_pp_dynamic" type="agent_nonauto2_node" output="screen">
+    <param name="bebopName" value="bebop4" />
+    <param name="n_of_obstacles" value="$(arg n_of_obstacles)" />
+    <param name="secs_per_rev" value="$(arg secs_per_rev)" />
+    <param name="ra" value="$(arg ra)" /> 
+    <param name="rbar" value="$(arg rbar)" /> 
+    <param name="rd" value="$(arg rd)" /> 
+    <param name="repsilon" value="$(arg repsilon)" /> 
+    <param name="usat" value="$(arg usat)" /> 
+    <rosparam param="weightQx" subst_value="True">$(arg weightQx)</rosparam>
+    <rosparam param="weightQzSum" subst_value="True">$(arg weightQzSum)</rosparam>
+    <rosparam param="init_desPose" subst_value="True">$(arg init_desPose)</rosparam>
+  </node>
+  
+  <!-- Node for simulating agent (for checking controller performance before actually flying)  --> 
+  <node name="agent_sim" pkg="adp_staf_pp_dynamic" type="agent_sim_node" output="screen">
+    <param name="bebopName" value="bebop4" />
+  </node>
+
+  <!-- Node for low level velocity tracking controller  --> 
+  <node name="agent_low_level_control" pkg="adp_staf_pp_dynamic" type="bebop_low_level_controller_node" output="screen">
+    <rosparam param="linVelGains" subst_value="True">$(arg linVelGains)</rosparam><!-- gain for linear velocity error tracking (Kp,Kd,Ki)-->
+    <rosparam param="angVelGains" subst_value="True">$(arg angVelGains)</rosparam><!-- gain for angular velocity error tracking (Kp,Kd,Ki)-->
+    <param name="usat" value="$(arg usat)" /> 
+    <param name="bebopName" value="bebop4" />
+  </node>
+
+  <node name="obstacle3_low_level_control" pkg="adp_staf_pp_dynamic" type="bebop_low_level_controller_node">
+    <rosparam param="linVelGains" subst_value="True">$(arg linVelGains)</rosparam><!-- gain for linear velocity error tracking (Kp,Kd,Ki)-->
+    <rosparam param="angVelGains" subst_value="True">$(arg angVelGains)</rosparam><!-- gain for angular velocity error tracking (Kp,Kd,Ki)-->
+    <param name="bebopName" value="bebop3" />
+    <param name="usat" value="$(arg usat)" /> 
+  </node>   
+  <node name="Synchronizer" pkg="adp_staf_pp_dynamic" type="synchronizer_node" output="screen" />
+
+</launch>
+

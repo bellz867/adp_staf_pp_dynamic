@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+
+<launch>
+  
+   
+    <!-- Start the camera recorder -->
+
+  <node pkg="image_view" type="video_recorder" name="video_recorder">
+      <remap from="image" to="/outputImage"/>
+      <param name="fps" value="30"/>
+      <param name="filename" value="/home/ncr/experiment_data/output.avi"/>
+      <param name="max_depth_range" value="0"/>
+  </node>
+    <node pkg="image_view" type="video_recorder" name="video_recorder">
+      <remap from="image" to="/outputImage"/>
+      <param name="fps" value="30"/>
+      <param name="filename" value="/home/ncr/experiment_data/output.avi"/>
+      <param name="max_depth_range" value="0"/>
+  </node>
+
+</launch>

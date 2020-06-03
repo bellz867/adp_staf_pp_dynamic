@@ -1,0 +1,14 @@
+Current Calibration:
+  translation:  0.0960949 -0.0554466 -0.0207288
+  orientation: -0.511255  0.491203 -0.503668  0.493576
+Measurement Variance:
+  translation: 2.11712e-05 0.000125962 9.73009e-05
+  orientation: 1.83467e-06  1.9324e-05 4.03703e-06 1.42198e-05
+
+To track the image pose, either run the following at the command line, or add the following to your launch file:
+
+Command line:
+rosrun tf static_transform_publisher 0.0960949 -0.0554466 -0.0207288 -0.511255 0.491203 -0.503668 0.493576 tripodcam image 100
+
+Launch File:
+<node pkg="tf" type="static_transform_publisher" name="image_broadcaster" args="0.0960949 -0.0554466 -0.0207288 -0.511255 0.491203 -0.503668 0.493576 tripodcam image 100" />
